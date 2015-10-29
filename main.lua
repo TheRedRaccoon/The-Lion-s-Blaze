@@ -46,6 +46,7 @@ require('world') -- World module
 -- On load (takes in command line arguments as a table)
 function love.load(cmdargs)
   args = cmdargs
+  fadealpha = 0
   lg.setBackgroundColor(color.bkblue)
   world.init()
 end
@@ -54,8 +55,21 @@ end
 
 -- On update (delta-time is represented by dt)
 function love.update(dt)
-  world.world:update(dt)
-  map:update(dt)
+  if fadeout and fadealpha < 255 then
+    print(fadealpha.." and fading.")
+    fadealpha = math.ceil(fadealpha + dt * 300)
+  elseif (fadein and fadealpha >= 255 and fadealpha > 0) then
+    fadealpha = math.ceil(fadealpha - dt * 300)
+  elseif fadeout and fadealpha >= 255 then
+    print("Done")
+    fadeout = false
+  elseif fadein and fadealpha <= 0 then
+    fadein = false
+  end
+  if not noMovement then
+    world.world:update(dt)
+    map:update(dt)
+  end
 end
 
 
@@ -69,8 +83,8 @@ function love.draw()
     tx = math.floor(-spriteLayer.sprites["player"].x + ww / 2)
     ty = math.floor(-spriteLayer.sprites["player"].y + wh / 2)
   else
-    tx = math.floor(((map.width * 32) / 2) + (ww/2) - 400)
-    ty = math.floor(((map.height * 32) / 2) + (wh/2) - 300)
+    tx = (ww/2) - math.floor(((map.width * 32) / 2))
+    ty = (wh/2) - math.floor(((map.height * 32) / 2))
   end
   
   lg.push()
@@ -83,6 +97,10 @@ function love.draw()
     map:box2d_draw()
   end
   lg.pop()
+  
+  lg.setColor({0, 0, 0, fadealpha})
+  lg.rectangle("fill", -2, -2, ww + 2, wh + 2)
+  lg.setColor(color.white)
 end
 
 
@@ -114,6 +132,9 @@ function love.keypressed(key)
   
   if key == 'c' then
     debugdraw = not debugdraw
+    noControl = not noControl
+    spriteLayer.sprites["player"].xm = 0
+    spriteLayer.sprites["player"].ym = 0
   end
   
   if key == 'f12' then

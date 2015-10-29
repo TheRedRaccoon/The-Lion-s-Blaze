@@ -72,13 +72,25 @@ function world.initializeObjects()
   end
 end
 
+
+
+-- Execute a transfer from one world to another
+function world.transfer(transdata)
+  fadeout = true
+  world.init(transdata)
+end
+
+
+
 --Collision callbacks
 function beginContact(a, b, coll)
   aData = a:getUserData() -- usually a tile/object
   bData = b:getUserData() -- usually the player
   
   if a:isSensor() then
-    world.init(Tserial.unpack(aData.properties.go_to))
+    if aData.properties.go_to then
+      world.transfer(Tserial.unpack(aData.properties.go_to))
+    end
   end
 end
 

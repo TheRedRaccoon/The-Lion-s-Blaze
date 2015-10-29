@@ -36,32 +36,34 @@ function sprites.init()
         sprite.keypressed.left = lk.isDown(sprite.keys.left)
         
         -- Update sprite animations if movement keys are pressed
-        if (sprite.keypressed.right or sprite.keypressed.left or sprite.keypressed.up or sprite.keypressed.down) then
+        if (sprite.keypressed.right or sprite.keypressed.left or sprite.keypressed.up or sprite.keypressed.down) and not noControl then
           sprite.animright:update(dt)
           sprite.animleft:update(dt)
           sprite.animup:update(dt)
           sprite.animdown:update(dt)
         end
         
-        -- Right & Left
-        if sprite.keypressed.right then
-          sprite.facing = "right"
-          sprite.xm = 1
-        elseif sprite.keypressed.left then
-          sprite.facing = "left"
-          sprite.xm = -1
-        else
-          sprite.xm = 0
-        end
-        -- Down & Up
-        if sprite.keypressed.down then
-          sprite.facing = "down"
-          sprite.ym = 1
-        elseif sprite.keypressed.up then
-          sprite.facing = "up"
-          sprite.ym = -1
-        else
-          sprite.ym = 0
+        -- Movement
+        if not noControl then
+          if sprite.keypressed.right then
+            sprite.facing = "right"
+            sprite.xm = 1
+          elseif sprite.keypressed.left then
+            sprite.facing = "left"
+            sprite.xm = -1
+          else
+            sprite.xm = 0
+          end
+          -- Down & Up
+          if sprite.keypressed.down then
+            sprite.facing = "down"
+            sprite.ym = 1
+          elseif sprite.keypressed.up then
+            sprite.facing = "up"
+            sprite.ym = -1
+          else
+            sprite.ym = 0
+          end
         end
         
         -- Apply motion to body
